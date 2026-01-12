@@ -1,8 +1,8 @@
 name: Deploy Vite Site
 on:
   push:
-    branches: ["main"] # Runs every time you push to main
-  workflow_dispatch:   # Allows you to run it manually
+    branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,21 +15,31 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          # Fix 1: Point to the lock file inside your 'Website' folder
           cache: 'npm'
+          cache-dependency-path: './Website/package-lock.json'
+
       - name: Install and Build
         run: |
+          # Fix 2: Navigate into the subfolder before running commands
+          cd Website
           npm ci
           npm run build
+          
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          # Fix 3: Point to the 'dist' folder inside your 'Website' folder
+          path: './Website/dist'
+          
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
