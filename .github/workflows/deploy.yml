@@ -20,16 +20,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # We tell GitHub exactly where to find the lock file for caching
           cache: 'npm'
-          cache-dependency-path: './Website/package-lock.json'
+          # This tells GitHub to look inside your folder for the lock file
+          cache-dependency-path: 'Website/package-lock.json'
 
       - name: Install and Build
         run: |
           cd Website
-          # We use 'npm install' if you don't have a package-lock.json, 
-          # but standard 'npm ci' is better if you do.
-          npm install
+          # Using install instead of ci just in case your lock file is missing
+          npm install 
           npm run build
           
       - name: Setup Pages
@@ -38,8 +37,8 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # We tell GitHub to upload the 'dist' folder inside the 'Website' folder
-          path: './Website/dist'
+          # This ensures GitHub hosts the 'dist' folder from inside 'Website'
+          path: 'Website/dist'
           
       - name: Deploy
         id: deployment
